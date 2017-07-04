@@ -1,0 +1,53 @@
+version: '2'
+
+services:
+  traefik:
+    image: traefik
+    restart: unless-stopped
+    command: -c /dev/null --web --docker --logLevel=DEBUG
+    networks:
+      - default
+      - project1
+      - project2
+      - project3
+    ports:
+      - '8000:80'
+      # - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.backend=traefik"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:traefik.docker.localhost"
+
+    
+  portainer:
+    image: portainer/portainer
+    restart: always
+    depends_on:
+      - traefik
+    command: --no-auth
+    networks:
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - 'traefik.backend=portainer'
+      - 'traefik.port=9000'
+      - 'traefik.frontend.rule=Host:portainer.docker.localhost'
+
+
+networks:
+  default:
+    external:
+      name: prof_default
+  project1:
+    external: 
+      name: learningwhy_default
+  project2:
+    external:
+      name: lotto_default
+  project3:
+    external:
+      name: cleand7_default    
+
