@@ -37,6 +37,27 @@ services:
       - 'traefik.frontend.rule=Host:portainer.docker.localhost'
 
 
+  adminer:
+#    image: wodby/adminer:4.3-1.1.0
+    image: hardware/adminer
+    restart: always
+    depends_on:
+      - traefik
+    environment:
+      ADMINER_SALT: adminer-salt
+    networks:
+      - default
+      - project1
+      - project2
+      - project3  
+    labels:
+      - "traefik.backend=adminer"
+#      - "traefik.port=9000" # for wodby/adminer
+      - "traefik.port=8888" # for hardware/adminer
+      - "traefik.frontend.rule=Host:adminer.docker.localhost"
+
+
+
 networks:
   default:
     external:
